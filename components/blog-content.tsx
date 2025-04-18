@@ -10,10 +10,11 @@ import {useSearchParams} from "next/navigation";
 import {pluginConfig} from "@/blog.config";
 import dayjs from "dayjs";
 import Pagination from "@/plugins/pagination";
+import { PostData } from "@/types/index";
 
-const BlogContent = ({posts}: any) => {
-    // 过滤掉未来的文章
-    posts = posts.filter((post: any) => dayjs(post.date).isBefore(dayjs()))
+const BlogContent = ({posts}: {posts: PostData[]}) => {
+   
+    posts = posts.filter((post: PostData) => dayjs(post.date).isBefore(dayjs()))
 
     // 查询参数
     const searchParams = useSearchParams()

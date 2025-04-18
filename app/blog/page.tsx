@@ -6,11 +6,11 @@ import PageContainer from "@/components/page-container";
 
 export const metadata: Metadata = getMetadata("blog")
 
-const Blog = () => {
-
+const Blog = async () => {
+    const posts = await getPostsData();
     return (
         <PageContainer>
-            <BlogContent posts={getPostsData()}/>
+            <BlogContent posts={posts}/>
         </PageContainer>
     )
 }

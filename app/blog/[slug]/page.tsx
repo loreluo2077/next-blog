@@ -24,9 +24,16 @@ import {
     DrawerTitle,
     DrawerTrigger
 } from "@/components/ui/drawer";
+import { PostData } from "@/types/blog";
 
-const getPost = async (slug: string) => {
-    const post: any = getPostsData().find((post) => post.id === slug)
+
+
+interface PageParams {
+    slug: string;
+}
+
+const getPost = async (slug: string): Promise<PostData | null> => {
+    const post: PostData | undefined = await getPostsData().then((posts) => posts.find((post: PostData) => post.id === slug))
     if (!post) return null
     // 获取目录数据
     const file = await remark()
@@ -40,24 +47,28 @@ const getPost = async (slug: string) => {
     }
 }
 
-export async function generateStaticParams() {
-    return getPostsData().map((post) => ({
-        slug: post.id
-    }))
+//在构建时 生成静态路由
+export async function generateStaticParams(): Promise<PageParams[]> {
+    return getPostsData().then((posts) => posts.map((post: PostData) => ({
+        slug: post.id,
+    })));
 }
 
-export async function generateMetadata({params}: any) {
-    const post: any = await getPost(params.slug)
-    if (!post) return notFound()
+//在页面渲染时，生成元数据
+export async function generateMetadata({params}: { params: PageParams }) {
+    const post = await getPost(params.slug);
+    if (!post) return notFound();
     return {
         title: post.title,
         description: post.summary,
     }
 }
 
-export default async function Post({params}: any) {
+export default async function Post({params}: { params: PageParams }) {
     const {slug} = params
+    console.log('slug',slug)
     const post: any = await getPost(slug)
+    console.log('post',post)
     if (!post || post?.draft) notFound()
 
     return (
@@ -116,7 +127,6 @@ export default async function Post({params}: any) {
                                             remarkGfm,
                                         ],
                                         rehypePlugins: [
-                                            shiki,
                                             rehypeSlug,
                                             rehypeStringify,
                                             rehypeAutolinkHeadings,
