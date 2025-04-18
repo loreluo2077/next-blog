@@ -3,8 +3,9 @@
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {useState} from "react";
+import { DrawerClose } from "./ui/drawer";
 
-const Toc = ({toc}: any) => {
+const Toc = ({toc, DrawerCloseComponent}: {toc: any, DrawerCloseComponent?: typeof DrawerClose}) => {
     const ml: any = {
         2: '',
         3: 'ml-4',
@@ -17,17 +18,19 @@ const Toc = ({toc}: any) => {
     const handleClick = (href: string) => {
         setCurrent(href)
         const id = href.replace('#', '')
-        const element: any = document.getElementById(id)
-        window.scrollTo({
-            top: element.offsetTop,
-            behavior: 'smooth'
-        })
+        setTimeout(() => {
+            const element: any = document.getElementById(id)
+            window.scrollTo({
+                top: element.offsetTop,
+                behavior: 'smooth'
+            })
+        }, 100)
     }
     return (
         <div className={'flex flex-col w-full space-y-1'}>
             {toc.length > 0 ?
                 toc.map((item: any, index: number) => {
-                    return (
+                    const ButtonComponent = (
                         <Button
                             onClick={() => {
                                 handleClick(item.href)
@@ -40,6 +43,11 @@ const Toc = ({toc}: any) => {
                             {item.value}
                         </Button>
                     )
+                    return DrawerCloseComponent ? (
+                        <DrawerCloseComponent asChild key={index}>
+                            {ButtonComponent}
+                        </DrawerCloseComponent>
+                    ) : ButtonComponent
                 })
                 :
                 <div className={'text-sm text-gray-500 p-4'}>

@@ -46,7 +46,7 @@ const Header = () => {
                     </Link>
                     <div className={'hidden md:block space-x-1'}>
                         {routes.map((route: any) => (
-                            <Link href={route?.value}>
+                            <Link key={route.value} href={route?.value}>
                                 <Button variant={active == route.name ? 'secondary' : 'ghost'} className={'text-base'}>
                                     {route.name}
                                 </Button>
@@ -66,7 +66,7 @@ const Header = () => {
                             </SheetTrigger>
                             <SheetContent side={'top'} className={'w-full space-y-4 p-12 text-sm'}>
                                 {routes.map((route: any, index: number) => (
-                                    <div className={'space-y-4'}>
+                                    <div className={'space-y-4'} key={route.value}>
                                         <Link href={route.value} onClick={() => {
                                             setOpen(false)
                                         }}>

@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import {TableProperties} from "lucide-react";
 import {
     Drawer,
+    DrawerClose,
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
@@ -66,9 +67,7 @@ export async function generateMetadata({params}: { params: PageParams }) {
 
 export default async function Post({params}: { params: PageParams }) {
     const {slug} = params
-    console.log('slug',slug)
     const post: any = await getPost(slug)
-    console.log('post',post)
     if (!post || post?.draft) notFound()
 
     return (
@@ -92,7 +91,7 @@ export default async function Post({params}: { params: PageParams }) {
                                         Table of contents
                                     </DrawerTitle>
                                 </DrawerHeader>
-                                <Toc toc={post.toc}/>
+                                <Toc toc={post.toc} DrawerCloseComponent={DrawerClose} />
                             </DrawerContent>
                         </Drawer>
                     </div>
