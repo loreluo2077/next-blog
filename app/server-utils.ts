@@ -1,28 +1,54 @@
 import path from "path";
-import fs from "fs";
+import fs from "fs/promises";  // 使用异步文件系统操作
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import dayjs from "dayjs";
 import {blogConfig} from "@/blog.config";
 
-export const getPostsData = () => {
+// 缓存对象
+let postsCache: any = null;
+let tagsCache: any = null;
+
+/**
+ * 获取所有博客文章数据
+ * 使用缓存机制避免重复读取文件系统
+ */
+export const getPostsData = async () => {
+    // 如果缓存存在，直接返回缓存的数据
+    if (postsCache) {
+        return postsCache;
+    }
+
+    // 获取 posts 目录的绝对路径
     const postsDirectory = path.join(process.cwd(), 'posts')
-    const fileNames = fs.readdirSync(postsDirectory)
-    const posts: any = fileNames.map((fileName: any) => {
-        // 这里匹配 md 或者 mdx
+    // 异步读取目录下所有文件名
+    const fileNames = await fs.readdir(postsDirectory)
+    
+    // 处理每个文件
+    const posts = await Promise.all(fileNames.map(async (fileName) => {
+        // 移除文件扩展名(.md 或 .mdx)得到文章 ID
         const id = fileName.replace(/\.mdx?$/, '')
+        // 构建文件的完整路径
         const fullPath = path.join(postsDirectory, fileName)
-        const fileContents = fs.readFileSync(fullPath, 'utf8')
+        // 异步读取文件内容
+        const fileContents = await fs.readFile(fullPath, 'utf8')
+        // 解析 Markdown 文件，分离元数据和内容
         const matterResult = matter(fileContents)
+        
+        // 返回处理后的文章数据
         return {
             id,
-            ...matterResult.data,
-            content: '\r\n' + `# ${matterResult?.data.title}` + matterResult.content,
-            stats: readingTime(matterResult.content)
+            ...matterResult.data,  // 展开元数据（如标题、日期、标签等）
+            content: '\r\n' + `# ${matterResult?.data.title}` + matterResult.content,  // 添加标题到内容中
+            stats: readingTime(matterResult.content)  // 计算阅读时间
         }
-    }).filter((post: any) => !post.draft)
+    }));
 
-    const {pinnedPosts, commonPosts} = posts.reduce((acc: any, post: any) => {
+    // 过滤掉草稿状态的文章
+    const filteredPosts = posts.filter((post: any) => !post.draft);
+
+    // 将文章分为置顶和非置顶两类
+    const {pinnedPosts, commonPosts} = filteredPosts.reduce((acc: any, post: any) => {
         if (post.pinned) {
             acc.pinnedPosts.push(post)
         } else {
@@ -30,9 +56,13 @@ export const getPostsData = () => {
         }
         return acc
     }, {pinnedPosts: [], commonPosts: []})
+    
+    // 获取置顶文章的排序方式（升序或降序）
     const {pinnedSort} = blogConfig.blog
 
-    return [
+    // 排序并缓存结果
+    postsCache = [
+        // 置顶文章按指定顺序排序
         ...pinnedPosts.sort((a: any, b: any) => {
             if (pinnedSort === 'asc') {
                 return a.pinned - b.pinned
@@ -40,12 +70,25 @@ export const getPostsData = () => {
                 return b.pinned - a.pinned
             }
         }),
+        // 普通文章按日期降序排序
         ...commonPosts.sort((a: any, b: any) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
-    ]
+    ];
+
+    return postsCache;
 }
 
-export const getTagsData = () => {
-    return getPostsData().reduce((acc: any, post: any) => {
+/**
+ * 获取所有标签及其使用次数
+ * 使用缓存机制避免重复计算
+ */
+export const getTagsData = async () => {
+    // 如果缓存存在，直接返回缓存的数据
+    if (tagsCache) {
+        return tagsCache;
+    }
+
+    const posts = await getPostsData();
+    tagsCache = posts.reduce((acc: any, post: any) => {
         post.tags.forEach((tag: any) => {
             if (!acc[tag]) {
                 acc[tag] = 0
@@ -53,5 +96,23 @@ export const getTagsData = () => {
             acc[tag]++
         })
         return acc
-    }, {})
+    }, {});
+
+    return tagsCache;
 }
+
+/**
+ * 清除缓存
+ * 在需要更新数据时调用（比如添加新文章后）
+ */
+export const clearCache = () => {
+    postsCache = null;
+    tagsCache = null;
+}
+
+// 测试代码：打印所有文章的 ID
+getPostsData().then((posts: any) => {
+    posts.forEach((post: any) => {
+        console.log(post.id)
+    })
+})

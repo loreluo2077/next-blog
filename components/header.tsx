@@ -15,6 +15,7 @@ import {Separator} from "@/components/ui/separator";
 import {Github, Menu, Moon, Sun} from "lucide-react";
 import {useTheme} from "next-themes";
 import Search from "@/plugins/search";
+import { LangueSwitch } from "./langue-switch";
 
 const Header = () => {
     const {routes, logo, githubRepo} = blogConfig
@@ -81,11 +82,7 @@ const Header = () => {
                         </Sheet>
                     </div>
                     <Search/>
-                    <Link href={githubRepo}>
-                        <Button size={'icon'} variant={'ghost'}>
-                            <Github size={20}/>
-                        </Button>
-                    </Link>
+                    <LangueSwitch/>
                     <Button
                         size={'icon'}
                         variant={'ghost'}
