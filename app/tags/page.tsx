@@ -1,11 +1,11 @@
-import {getTagsData} from "@/app/server-utils";
-import {Button} from "@/components/ui/button";
+import { getTagsData } from "@/app/server-utils";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {blogConfig} from "@/blog.config";
+import { blogConfig } from "@/blog.config";
 import PageContainer from "@/components/page-container";
 
 export async function generateMetadata() {
-    const {title, tags} = blogConfig
+    const { title, tags } = blogConfig
     return {
         title: `${tags?.title} - ${title}`,
         description: `${tags.description} ${Object.keys(getTagsData()).join(", ")}`,
@@ -13,8 +13,8 @@ export async function generateMetadata() {
 }
 
 
-const Tags = () => {
-    const tags = getTagsData()
+const Tags = async () => {
+    const tags = await getTagsData()
 
     return (
         <PageContainer>

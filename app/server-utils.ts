@@ -3,7 +3,7 @@ import fs from "fs/promises";  // 使用异步文件系统操作
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import dayjs from "dayjs";
-import {blogConfig} from "@/blog.config";
+import { blogConfig } from "@/blog.config";
 import { PostData, PostMetadata, PostsCache, TagsCache } from "@/types/index";
 
 // 缓存对象
@@ -22,7 +22,7 @@ export const getPostsData = async (): Promise<PostData[]> => {
 
     // 获取 posts 目录的绝对路径
     const postsDirectory = path.join(process.cwd(), 'posts')
-    
+
     // 异步读取目录下所有文件名
     const fileNames = await fs.readdir(postsDirectory)
 
@@ -36,7 +36,7 @@ export const getPostsData = async (): Promise<PostData[]> => {
         const fileContents = await fs.readFile(fullPath, 'utf8')
         // 解析 Markdown 文件，分离元数据和内容
         const matterResult = matter(fileContents)
-        
+
         // 返回处理后的文章数据
         return {
             id,
@@ -45,24 +45,24 @@ export const getPostsData = async (): Promise<PostData[]> => {
             stats: readingTime(matterResult.content)  // 计算阅读时间
         } as PostData
     }));
-    
-    
+
+
     // 过滤掉草稿状态的文章
     const filteredPosts = posts.filter((post: PostData) => !post.draft);
     // console.log('Filtered posts:', filteredPosts);
 
     // 将文章分为置顶和非置顶两类
-    const {pinnedPosts, commonPosts} = filteredPosts.reduce((acc: {pinnedPosts: PostData[], commonPosts: PostData[]}, post: PostData) => {
+    const { pinnedPosts, commonPosts } = filteredPosts.reduce((acc: { pinnedPosts: PostData[], commonPosts: PostData[] }, post: PostData) => {
         if (post.pinned) {
             acc.pinnedPosts.push(post)
         } else {
             acc.commonPosts.push(post)
         }
         return acc
-    }, {pinnedPosts: [], commonPosts: []})
-    
+    }, { pinnedPosts: [], commonPosts: [] })
+
     // 获取置顶文章的排序方式（升序或降序）
-    const {pinnedSort} = blogConfig.blog
+    const { pinnedSort } = blogConfig.blog
 
     // 排序并缓存结果
     postsCache = [
