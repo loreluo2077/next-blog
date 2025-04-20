@@ -6,12 +6,12 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Time from "@/components/time";
-import {CommandLoading} from "cmdk";
+import { CommandLoading } from "cmdk";
 
-const Cmdk = ({open, setOpen}: any) => {
+const Cmdk = ({ open, setOpen }: any) => {
     const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState([])
     useEffect(() => {
@@ -25,18 +25,21 @@ const Cmdk = ({open, setOpen}: any) => {
 
     return (
         <CommandDialog open={open} onOpenChange={setOpen}>
-            <CommandInput placeholder="Type a command or search..."/>
+            <CommandInput placeholder="Type a command or search..." />
             <CommandList className={'space-y-4 max-h-[480px]'}>
                 {loading && <CommandLoading>Fetching data…</CommandLoading>}
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Blog">
                     <div className={'space-y-4'}>
                         {posts.map((post: any) => (
-                            <Link href={`/blog/${post?.id}`}>
+                            <Link
+                                href={`/blog/${post?.id}`}
+                                key={post.id}
+                                onClick={() => setOpen(false)}
+                            >
                                 <CommandItem className={'flex flex-col justify-center items-start'}>
                                     <div>
-                                        <Time date={post.date}/>
-
+                                        <Time date={post.date} />
                                     </div>
                                     <span className={'text-lg'}>{post.title}</span>
                                 </CommandItem>
@@ -48,6 +51,5 @@ const Cmdk = ({open, setOpen}: any) => {
         </CommandDialog>
     );
 }
-
 
 export default Cmdk
