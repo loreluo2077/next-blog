@@ -1,5 +1,5 @@
 import PageContainer from "@/components/page-container";
-import ScrollableButtonContainer from "../../components/ScrollableButtonContainer";
+import ScrollableButtonContainer from "../../../components/ScrollableButtonContainer";
 
 const Playground = () => {
     return (
