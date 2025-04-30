@@ -26,7 +26,7 @@ const Title = () => {
                 </p>
             }
             <p>
-                <Newsletter />
+                {/* <Newsletter /> */}
             </p>
             <Separator />
         </div>
