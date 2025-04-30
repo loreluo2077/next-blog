@@ -14,6 +14,6 @@ const Home = () => {
             <SocialList />
         </div>
     )
-}S
+}
 
 export default Home

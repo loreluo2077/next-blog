@@ -16,14 +16,14 @@ const blogConfig: any = {
 
         // you can use image or text as the logo, you can choose both, but the image will be displayed first
         image: "/logo.png", //  the file path of the logo in the public directory
-        text: "YUNFAN", // null || text
+        text: "LetterGPT", // null || text
 
         // whether the logo is a link to the home page
         isHomeLink: true, // true | false
     },
 
     // website title
-    title: "YUNFAN",
+    title: "LetterGPT",
 
     // website description
     description: "个人博客 ",
