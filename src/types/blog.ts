@@ -16,7 +16,8 @@ export interface PostMetadata {
 export interface PostData extends PostMetadata {
     id: string;
     content: string;
-    toc: any; 
+    toc: any;
+    locale: string;
     stats: {
         text: string;
         time: number;

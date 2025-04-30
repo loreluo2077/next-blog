@@ -1,20 +1,21 @@
-import { getTagsData } from "@/app/server-utils";
+import { getTagsData } from "@/lib/post-utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { blogConfig } from "@/blog.config";
 import PageContainer from "@/components/page-container";
+import { LangParams } from "@/types";
 
-export async function generateMetadata() {
+export async function generateMetadata({ params }: { params: LangParams }) {
     const { title, tags } = blogConfig
     return {
         title: `${tags?.title} - ${title}`,
-        description: `${tags.description} ${Object.keys(getTagsData()).join(", ")}`,
+        description: `${tags.description} ${Object.keys(getTagsData(params.locale)).join(", ")}`,
     }
 }
 
 
-const Tags = async () => {
-    const tags = await getTagsData()
+const Tags = async ({ params }: { params: { locale: string } }) => {
+    const tags = await getTagsData(params.locale)
 
     return (
         <PageContainer>

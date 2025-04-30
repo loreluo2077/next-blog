@@ -10,12 +10,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Time from "@/components/time";
 import { CommandLoading } from "cmdk";
+import { useParams } from "next/navigation";
 
 const Cmdk = ({ open, setOpen }: any) => {
     const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState([])
+    const params = useParams();
+    const currentLocale = params.locale as string;
+
     useEffect(() => {
-        fetch('/api/get_posts')
+        fetch(`/api/get_posts?locale=${currentLocale}`)
             .then((res) => res.json())
             .then((data) => {
                 setPosts(data.data)

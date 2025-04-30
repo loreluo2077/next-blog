@@ -10,49 +10,54 @@ import { PostData, PostMetadata, PostsCache, TagsCache } from "@/types/index";
 let postsCache: PostsCache = null;
 let tagsCache: TagsCache = null;
 
+const postDir = 'src/posts'
+
 /**
  * 获取所有博客文章数据
  * 使用缓存机制避免重复读取文件系统
  */
-export const getPostsData = async (): Promise<PostData[]> => {
-    // 如果缓存存在，直接返回缓存的数据
+export const getPostsData = async (locale: string): Promise<PostData[]> => {
     if (postsCache) {
-        return postsCache;
+        return postsCache.filter(post => post.locale === locale);
     }
 
-    // 获取 posts 目录的绝对路径
-    const postsDirectory = path.join(process.cwd(), 'src/posts')
-
-    // 异步读取目录下所有文件名
+    const postsDirectory = path.join(process.cwd(), postDir)
     const fileNames = await fs.readdir(postsDirectory)
 
-    // 处理每个文件
     const posts = await Promise.all(fileNames.map(async (fileName) => {
-        // 移除文件扩展名(.md 或 .mdx)得到文章 ID
-        const id = fileName.replace(/\.mdx?$/, '')
-        // 构建文件的完整路径
+        // 从文件名中提取语言信息
+        const [baseName, locale] = fileName.split('_');
+
+        // 如果没有语言标识，记录警告并返回 null
+        if (!locale) {
+            console.warn(`[警告] 文章 "${fileName}" 没有设置语言标识，该文章将被排除`);
+            return null;
+        }
+
+        const id = baseName.replace(/\.mdx?$/, '')
         const fullPath = path.join(postsDirectory, fileName)
-        // 异步读取文件内容
         const fileContents = await fs.readFile(fullPath, 'utf8')
-        // 解析 Markdown 文件，分离元数据和内容
         const matterResult = matter(fileContents)
 
-        // 返回处理后的文章数据
+        // 获取文件名中的语言（移除.md或.mdx扩展名）
+        const postLocale = locale.replace(/\.mdx?$/, '');
+
         return {
             id,
-            ...matterResult.data as PostMetadata,  // 展开元数据（如标题、日期、标签等）
-            content: '\r\n' + `# ${matterResult?.data.title}` + matterResult.content,  // 添加标题到内容中
-            stats: readingTime(matterResult.content)  // 计算阅读时间
+            ...matterResult.data as PostMetadata,
+            content: '\r\n' + `# ${matterResult?.data.title}` + matterResult.content,
+            stats: readingTime(matterResult.content),
+            locale: postLocale
         } as PostData
     }));
 
-
-    // 过滤掉草稿状态的文章
-    const filteredPosts = posts.filter((post: PostData) => !post.draft);
-    // console.log('Filtered posts:', filteredPosts);
+    // 过滤掉 null 值（没有语言标识的文章）和草稿
+    const validPosts = posts.filter((post): post is PostData =>
+        post !== null && !post.draft
+    );
 
     // 将文章分为置顶和非置顶两类
-    const { pinnedPosts, commonPosts } = filteredPosts.reduce((acc: { pinnedPosts: PostData[], commonPosts: PostData[] }, post: PostData) => {
+    const { pinnedPosts, commonPosts } = validPosts.reduce((acc: { pinnedPosts: PostData[], commonPosts: PostData[] }, post: PostData) => {
         if (post.pinned) {
             acc.pinnedPosts.push(post)
         } else {
@@ -66,7 +71,6 @@ export const getPostsData = async (): Promise<PostData[]> => {
 
     // 排序并缓存结果
     postsCache = [
-        // 置顶文章按指定顺序排序
         ...pinnedPosts.sort((a, b) => {
             if (pinnedSort === 'asc') {
                 return (a.pinned || 0) - (b.pinned || 0)
@@ -74,24 +78,24 @@ export const getPostsData = async (): Promise<PostData[]> => {
                 return (b.pinned || 0) - (a.pinned || 0)
             }
         }),
-        // 普通文章按日期降序排序
         ...commonPosts.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
     ];
 
-    return postsCache;
+    // 根据请求的语言返回过滤后的文章
+    return postsCache.filter(post => post.locale === locale);
 }
 
 /**
  * 获取所有标签及其使用次数
  * 使用缓存机制避免重复计算
  */
-export const getTagsData = async (): Promise<Record<string, number>> => {
+export const getTagsData = async (locale: string): Promise<Record<string, number>> => {
     // 如果缓存存在，直接返回缓存的数据
     if (tagsCache) {
         return tagsCache;
     }
 
-    const posts = await getPostsData();
+    const posts = await getPostsData(locale);
     tagsCache = posts.reduce((acc: Record<string, number>, post) => {
         post.tags.forEach((tag) => {
             if (!acc[tag]) {

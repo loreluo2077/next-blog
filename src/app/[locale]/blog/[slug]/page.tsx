@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Suspense } from "react";
 import Time from "@/components/time";
-import { getPostsData } from "@/app/server-utils";
+import { getPostsData } from "@/lib/post-utils";
 import SideNav from "@/components/side-nav";
 import Comments from "@/plugins/comments";
 import shiki from 'rehype-shiki'
@@ -17,6 +17,8 @@ import remarkNormalizeHeadings from "remark-normalize-headings";
 import Toc from "@/components/toc";
 import { Button } from "@/components/ui/button";
 import { TableProperties } from "lucide-react";
+import { routing } from '@/i18n/routing';
+
 import {
     Drawer,
     DrawerClose,
@@ -25,16 +27,15 @@ import {
     DrawerTitle,
     DrawerTrigger
 } from "@/components/ui/drawer";
-import { PostData } from "@/src/types/blog";
-
-
+import { PostData } from "@/types/blog";
 
 interface PageParams {
     slug: string;
+    locale: string;
 }
 
-const getPost = async (slug: string): Promise<PostData | null> => {
-    const post: PostData | undefined = await getPostsData().then((posts) => posts.find((post: PostData) => post.id === slug))
+const getPost = async (slug: string, locale: string): Promise<PostData | null> => {
+    const post: PostData | undefined = await getPostsData(locale).then((posts) => posts.find((post: PostData) => post.id === slug))
     if (!post) return null
     // 获取目录数据
     const file = await remark()
@@ -50,14 +51,18 @@ const getPost = async (slug: string): Promise<PostData | null> => {
 
 //在构建时 生成静态路由
 export async function generateStaticParams(): Promise<PageParams[]> {
-    return getPostsData().then((posts) => posts.map((post: PostData) => ({
-        slug: post.id,
-    })));
+    const promises = routing.locales.map((locale) =>
+        getPostsData(locale).then((posts) => posts.map((post: PostData) => ({
+            slug: post.id,
+            locale: post.locale
+        })))
+    );
+    return Promise.all(promises).then(results => results.flat());
 }
 
 //在页面渲染时，生成元数据
 export async function generateMetadata({ params }: { params: PageParams }) {
-    const post = await getPost(params.slug);
+    const post = await getPost(params.slug, params.locale);
     if (!post) return notFound();
     return {
         title: post.title,
@@ -67,7 +72,7 @@ export async function generateMetadata({ params }: { params: PageParams }) {
 
 export default async function Post({ params }: { params: PageParams }) {
     const { slug } = params
-    const post: any = await getPost(slug)
+    const post: any = await getPost(slug, params.locale)
     if (!post || post?.draft) notFound()
 
     return (
