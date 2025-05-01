@@ -35,7 +35,7 @@ const Footer = () => {
                         {isShowPoweredBy &&
                             <span>,Powered by <Link
                                 className={'font-bold hover:underline hover:underline-offset-4 cursor-pointer'}
-                                href={'https://github.com/imyuanli/next-blog'}>NextBlog</Link>.
+                                href={'https://github.com/imyuanli/next-blog'}>LetterGPT</Link>.
                             </span>
                         }
                     </div>

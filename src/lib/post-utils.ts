@@ -90,23 +90,33 @@ export const getPostsData = async (locale: string): Promise<PostData[]> => {
  * 使用缓存机制避免重复计算
  */
 export const getTagsData = async (locale: string): Promise<Record<string, number>> => {
-    // 如果缓存存在，直接返回缓存的数据
-    if (tagsCache) {
-        return tagsCache;
+    // 如果缓存存在且包含当前语言的标签统计，直接返回
+    if (tagsCache && tagsCache[locale]) {
+        return tagsCache[locale];
     }
 
     const posts = await getPostsData(locale);
-    tagsCache = posts.reduce((acc: Record<string, number>, post) => {
+
+    // 如果缓存不存在，初始化缓存结构
+    if (!tagsCache) {
+        tagsCache = {};
+    }
+
+    // 计算当前语言的标签统计
+    const tagStats = posts.reduce((acc: Record<string, number>, post) => {
         post.tags.forEach((tag) => {
             if (!acc[tag]) {
-                acc[tag] = 0
+                acc[tag] = 0;
             }
-            acc[tag]++
-        })
-        return acc
+            acc[tag]++;
+        });
+        return acc;
     }, {});
 
-    return tagsCache;
+    // 将当前语言的标签统计存入缓存
+    tagsCache[locale] = tagStats;
+
+    return tagStats;
 }
 
 /**

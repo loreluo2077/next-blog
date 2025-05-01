@@ -73,8 +73,8 @@ const BlogContent = ({ posts }: { posts: PostData[] }) => {
                             </div>
                             <div className={'space-x-2'}>
                                 {post?.tags?.map((tag: string, index: number) => (
-                                    <Link href={`/blog?tag=${tag}`}>
-                                        <Badge key={index} variant={currentTag == tag ? "secondary" : "outline"}>
+                                    <Link key={tag} href={`/blog?tag=${tag}`}>
+                                        <Badge variant={currentTag == tag ? "secondary" : "outline"}>
                                             #{tag}
                                         </Badge>
                                     </Link>

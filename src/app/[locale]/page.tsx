@@ -12,7 +12,7 @@ const Home = ({ params }: { params: { locale: string } }) => {
     return (
         <div className={"container"}>
             <I18nMDX slug="intro" locale={locale} />
-            <SocialList />
+            {/* <SocialList /> */}
         </div>
     )
 }

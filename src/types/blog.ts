@@ -34,4 +34,4 @@ export type PostsCache = PostData[] | null;
 /**
  * 标签缓存类型
  */
-export type TagsCache = Record<string, number> | null; 
+export type TagsCache = Record<string, Record<string, number>> | null; 

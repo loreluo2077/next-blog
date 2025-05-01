@@ -1,7 +1,5 @@
 // Purpose: This file is used to configure the blog, including the author, title, description, and other settings.
 
-import Intro from "./components/intro.mdx" // introduction or about me
-
 // Page Config
 // The following is the configuration of the blog, including the author, title, description, and other settings.
 const blogConfig: any = {
@@ -62,10 +60,6 @@ const blogConfig: any = {
     home: {
         title: "Welcome to NextBlog",
         description: "A minimalist blog created with Next.js ,Shadcn-ui and Tailwind.css",
-
-        // introduction or about me
-        // Why use components instead of configurations? Because this makes the homepage more customizable instead of a hard-coded template.
-        intro: Intro, // file path of the introduction
     },
 
     // blog page config
@@ -231,13 +225,13 @@ const pluginConfig = {
         description: "Stay updated on new releases and features, guides, and case studies.",
 
         position: {
-            footer: true, // in the footer
-            blog: true, // on the blog list page
+            footer: false, // in the footer
+            blog: false, // on the blog list page
         },
 
         // buttondown doc: https://buttondown.com
         buttondown: {
-            username: "yuanli", //  your buttondown username
+            username: "yunfan", //  your buttondown username
         },
     },
 }
