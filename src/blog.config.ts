@@ -37,17 +37,14 @@ const blogConfig: any = {
     // routes
     routes: [
         {
-            name: 'Blog',
-            value: '/blog'
-        },
-        {
-            name: 'Tags',
-            value: '/tags'
-        },
-        {
             name: 'Projects',
             value: '/project'
         },
+        {
+            name: 'Blogs',
+            value: '/blog'
+        }
+
     ],
 
     // socials links

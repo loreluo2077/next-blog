@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
  
+/* 防止在ios上,输入框字体大小被放大 */
 input,
 input:focus ,
 textarea,

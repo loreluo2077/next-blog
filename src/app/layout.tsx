@@ -44,7 +44,7 @@ export default async function RootLayout({
                         <div className={'flex-1'}>
                             <Header />
                             <main className={'md:mb-12 mb-8 min-w-full prose md:prose-lg dark:prose-invert'}>
-                                <Title />
+                                {/* <Title /> */}
                                 {children}
                             </main>
                         </div>

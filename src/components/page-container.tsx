@@ -1,6 +1,8 @@
-const PageContainer = ({children}: any) => {
+import { cn } from "@/lib/utils"
+
+const PageContainer = ({ children, className }: any) => {
     return (
-        <div className={'container pt-8 space-y-8'}>
+        <div className={cn('container', className)}>
             {children}
         </div>
     )

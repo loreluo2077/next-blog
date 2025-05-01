@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 import { blogConfig } from "@/blog.config";
+import { Separator } from "@/components/ui/separator";
 
 
 const ProjectContent = () => {
@@ -17,7 +18,7 @@ const ProjectContent = () => {
                 const { variant, text }: any = getStatus(project.status)
                 return (
                     <div className={'not-prose'} key={index}>
-                        <div className={'flex items-center mb-2'}>
+                        <div className={'flex items-center mb-2 '}>
                             {project.href ?
                                 <Link href={project.href} className={'underline underline-offset-4'}>
                                     <CardTitle>
