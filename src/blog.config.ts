@@ -124,37 +124,16 @@ const blogConfig: any = {
         // you can add more fields according to your needs ,but you need to modify the code in the project/page.tsx file
         projects: [
             {
-                name: "NextBlog",
-                description: "A minimalist blog created with Next.js ,Shadcn-ui and Tailwind.css",
+                name: "Website",
                 href: "https://next-blog.imyuanli.cn",
                 github: "imyuanli/next-blog",
                 status: "active",
             },
             {
-                name: "AllDone",
-                description: "One stop project management platform",
+                name: "SupportMail",
                 status: "dev",
             },
-            {
-                name: "Slash Editor",
-                description: "A simple rich text editor",
-                href: "https://slash.imyuanli.cn",
-                github: "imyuanli/slash-editor",
-            },
-            {
-                name: "RMX",
-                description: "Readme is an online editor that can help developers quickly create README.md for their projects, while also meeting some templates for Github personal pages",
-                href: "https://readme.imyuanli.cn/",
-                github: "imyuanli/readme",
-                status: "filed",
-            },
-            {
-                name: "Resume",
-                description: "A simple resume template",
-                href: "https://resume.imyuanli.cn/",
-                github: "imyuanli/resume",
-                status: "offline",
-            },
+
         ],
     },
 

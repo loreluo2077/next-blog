@@ -2,5 +2,15 @@
     "HomePage": {
       "title": "Hello world!",
       "about": "Go to the about page"
+    },
+    "ProjectPage": {
+      "Website": {
+        "name": "Website",
+        "description": "虚拟公司官网"
+      },
+      "SupportMail": {
+        "name": "SupportMail",
+        "description": "虚拟公司邮件推送"
+      }
     }
   }

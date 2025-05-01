@@ -2,5 +2,16 @@
     "HomePage": {
       "title": "Hello world!",
       "about": "Go to the about page"
+    },
+    "ProjectPage": {
+      "name": "Website",
+      "Website": {
+        "name": "Website",
+        "description": "Virtual company website"
+      },
+      "SupportMail": {
+        "name": "SupportMail",
+        "description": "Virtual company email push"
+      }
     }
   }
